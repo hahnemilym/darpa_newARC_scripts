@@ -1,0 +1,3 @@
+unpacksdcmdir -src /cluster/archive/321/siemens/Prisma_fit-67026-20180529-222942-000380 -targ /autofs/space/lilli_001/users/DARPA-ARC_RER/G_1 -scanonly /autofs/space/lilli_001/users/DARPA-ARC_RER/G_1/cfg.txt;
+unpacksdcmdir -src /cluster/archive/323/siemens/Prisma_fit-67026-20181120-192834-001116 -targ /autofs/space/lilli_001/users/DARPA-ARC_RER/G_2 -scanonly /autofs/space/lilli_001/users/DARPA-ARC_RER/G_2/cfg.txt;
+unpacksdcmdir -src /cluster/archive/321/siemens/Prisma_fit-67026-20180529-203428-000379 -targ /autofs/space/lilli_001/users/DARPA-ARC_RER/P -scanonly /autofs/space/lilli_001/users/DARPA-ARC_RER/P/cfg.txt;
