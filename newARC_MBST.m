@@ -1,4 +1,5 @@
-function general_multiband_slice_timing(subjects, conditions, runs )
+function general_multiband_slice_timing(subjects, conditions, runs)
+
 % This is a simple wrapper function that does slice timing corrections for
 % the Deckersbach group for their multi-band imaging scans. Assumes a scan
 % with 63 slices collected in an interleaved fashion (odds-first) across
@@ -6,10 +7,8 @@ function general_multiband_slice_timing(subjects, conditions, runs )
 % go to matlab and open spm then type the exact function. SPM will open a window which will 
 % allow you to select your exact files etc..
 
-%% Example Commands: 
-
-% 1. general_multiband_slice_timing({'hc001', 'hc003'},{'msit','ecr'},{1})
-% 2. general_multiband_slice_timing({'hc001', 'hc003'},{'arc_rer'},{1,2,3})
+%% Example Command:
+% general_multiband_slice_timing({'newARC_001', 'newARC_002'},{'newARC'},{1,2,3})
 
 % Note: arc_rer can only be processed by itself. 
 % Other tasks may be processed together.
@@ -30,9 +29,9 @@ for subIdx = 1:numSub
         for runIdx = 1:numRuns
             %% Specify TR and Task Directory.
             switch conditions{condIdx}
-                case 'msit'
+                case 'newARC'
                     TR = 1750
-                    dir = '/space/lilli/4/users/DARPA-MSIT/msit';
+                    dir = '/space/lilli/4/users/DARPA-NewARC';
             end
 
             %% Specify Run Directory.
@@ -67,7 +66,7 @@ for subIdx = 1:numSub
 
             %% Perform slice timing.
             try
-                spm_mbst(P, sliceorder, refslice, timing, prefix);
+                newARC_spm_mbst(P, sliceorder, refslice, timing, prefix);
             catch
                 1+1;
             continue
