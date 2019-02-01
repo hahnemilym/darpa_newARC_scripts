@@ -14,7 +14,7 @@ s=sub(1:end-4);
 x=load([raw_dir,sub]);
 tt=x.TrialStruct.Trials;
 s2t=struct2table(tt);
-writetable(s2t,[preproc_dir s '.csv']);
+%writetable(s2t,[preproc_dir s '.csv']);
 end
 
 
