@@ -10,13 +10,15 @@ setenv DIR /autofs/space/lilli_
 setenv SUBJECTS_DIR ${DIR}001/users/DARPA-Recons
 
 # Analysis Directory
-setenv ANALYSES_DIR ${DIR}001/users/DARPA-Scripts/tutorials/darpa_msit_ecr_pipeline/scripts
+setenv ANALYSES_DIR ${DIR}001/users/DARPA-Scripts/tutorials/darpa_pipelines_EH/darpa_newARC_scripts
 
 # Project Directory
-setenv MSIT_DIR ${DIR}004/users/DARPA-MSIT
+setenv newARC_DIR ${DIR}001/users/DARPA-newARC
 
 # Parameters Directory
-setenv PARAMS_DIR $MSIT_DIR/I-C_parameters/
+setenv PARAMS_DIR $MSIT_DIR/behavior
+
+## https://surfer.nmr.mgh.harvard.edu/fswiki/FsFastParametricModulation
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # I. Define parameters.
@@ -24,9 +26,9 @@ setenv PARAMS_DIR $MSIT_DIR/I-C_parameters/
 set FWHM = 6 
 set TR = 1.75
 set FD = (1.0)
-set fsd = msit_001
+set fsd = newARC_001
 set subdir = 001
-set subjects = ($PARAMS_DIR/subjects_8-13-18.txt)
+set subjects = ($PARAMS_DIR/params/subjects.txt)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # III. INDIVIDUAL ANALYSES
@@ -41,8 +43,8 @@ foreach SUBJECT ( `cat $subjects` )
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 
-cp $MSIT_DIR/I-C_parameters/msit_I-C.par \
-$MSIT_DIR/$SUBJECT/$fsd/$subdir/msit_I-C.par
+cp $PARAMS_DIR/indiv_par_files/${SUBJECT}_allruns.par \
+$newARC_DIR/$SUBJECT/$fsd/$subdir/
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -56,17 +58,17 @@ mkanalysis-sess \
 -surface fsaverage $cortices \
 -fwhm $FWHM \
 -event-related \
--paradigm msit_I-C.par \
+-paradigm ${SUBJECT}_allruns.par \
 -nconditions 2 \
 -spmhrf 0 \
 -TR $TR \
 -refeventdur 1.75 \
 -nskip 4 \
 -hpf 0.02 \
--analysis I-C.analyses/msit_I-C.analysis.$cortices \
+-analysis PM.analyses/msit_I-C.analysis.$cortices \
 -per-run \
--nuisreg I-C.mc.par \
--1 -tpexclude I-C.censor.$FD.par \
+-nuisreg PM.mc.par \
+-1 -tpexclude PM.censor.$FD.par \
 -force
 
 end
@@ -79,17 +81,17 @@ mkanalysis-sess \
 -$subcortices 2 \
 -fwhm $FWHM \
 -event-related \
--paradigm msit_I-C.par \
+-paradigm ${SUBJECT}_allruns.par \
 -nconditions 2 \
 -spmhrf 0 \
 -TR $TR \
 -refeventdur 1.75 \
 -nskip 4 \
 -hpf 0.02  \
--analysis I-C.analyses/msit_I-C.analysis.$subcortices \
+-analysis PM.analyses/PM.$subcortices \
 -per-run \
--nuisreg I-C.mc.par \
--1 -tpexclude I-C.censor.$FD.par \
+-nuisreg PM.mc.par \
+-1 -tpexclude PM.censor.$FD.par \
 -force
 
 end
@@ -98,11 +100,14 @@ end
 # VI. Specify contrasts 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+## Check 1,2,3 conditions in par file
+
 foreach cortices (lh rh mni305)
 
 mkcontrast-sess \
--analysis I-C.analyses/msit_I-C.analysis.$cortices \
--contrast I-C \
+-analysis PM.analysis/PM.analysis.$cortices \
+-contrast ParamMod \
+-a 3 \
 -a 2 \
 -c 1 \
 -overwrite
@@ -117,7 +122,7 @@ foreach cortices (lh rh mni305)
 
 selxavg3-sess \
 -s $SUBJECT \
--analysis I-C.analyses/msit_I-C.analysis.$cortices
+-analysis PM.analysis/PM.analysis.$cortices
 
 end
 

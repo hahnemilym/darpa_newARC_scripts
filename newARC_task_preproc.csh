@@ -21,10 +21,10 @@ setenv SUBJECTS_DIR /autofs/space/lilli_001/users/DARPA-Recons/
 ## ONLY CHANGE THE FOLLOWING FIELDS ##
 ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
-set SUBJECTS = (ep017)    ## Specify subjects
-set FWHM = 6 		  ## Specify smoothing 
-set TASKS = (msit)	  ## Specify task
-set RUN = 001		  ## Specify run number
+set SUBJECTS = (newARC_001)    ## Specify subjects
+set FWHM = 6 		       ## Specify smoothing 
+set TASKS = (newARC)	       ## Specify task
+set RUN = 001		       ## Specify run number
 
 ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
@@ -46,41 +46,9 @@ foreach TASK ($TASKS)
         ## Set Project Directory and TR for each task.  
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 	switch ($TASK)
-    	    case 'arc':
+    	    case 'newARC':
         	set TR = 1750 
-		set ROOT_DIR = /autofs/space/lilli_002/users/DARPA-ARC/
-                breaksw
-	    case 'arc_rer':
-                set TR = 1750  
-                set ROOT_DIR = ''
-		breaksw
-            case 'msit':
-                set TR = 1750 
-                set ROOT_DIR = /autofs/space/lilli_004/users/DARPA-MSIT/
-		breaksw
-            case 'ecr':
-                set TR = 2000
-                set ROOT_DIR = /autofs/space/lilli_004/users/DARPA-ECR/
-                breaksw
-            case 'war':
-                set TR = 2000 
-                set ROOT_DIR = /autofs/space/lilli_002/users/DARPA-WAR/
-                breaksw
-            case 'learning':
-                set TR = 2200
-                set ROOT_DIR = /autofs/space/lilli_004/users/DARPA-Learning/
-                breaksw
-            case 'cond':
-                set TR = 2560 
-                set ROOT_DIR = ''
-                breaksw
-            case 'ext':
-                set TR = 2560 
-                set ROOT_DIR = ''
-                breaksw
-            case 'rcl':
-                set TR = 2560
-                set ROOT_DIR = ''
+		set ROOT_DIR = /autofs/space/lilli_002/users/DARPA-newARC/
                 breaksw
 	    default:
 		echo 'Invalid Task'
@@ -95,11 +63,6 @@ foreach TASK ($TASKS)
         set SUB_NAME = `echo $SUBJECT | tr '[:lower:]' '[:upper:]'`
 	set TASK_NAME = `echo $TASK | tr '[:lower:]' '[:upper:]'`
 	echo $TASK_NAME	
-	if ($TASK == learning) then 
-	    set TASK_NAME = Learning
-	else if ( $TASK == arc_rer ) then 
-	    set TASK_NAME = ARC
-	endif 
         
 	if !(-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/a{$SUB_NAME}_{$TASK_NAME}.nii) then
             if (-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/f.nii) then
@@ -119,19 +82,13 @@ foreach TASK ($TASKS)
 	## Reinforce TR. (SPM removes TR info from header during STC)
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 	
-	if ( $TASK == arc || $TASK == arc_rer || $TASK == msit ) then 
+	if ( $TASK == newARC ) then 
 	    set TR = 1750
-	else if ( $TASK == ecr || $TASK == war ) then 
-	    set TR = 2000
-	else if ( $TASK == cond || $TASK == rcl || $TASK == ext ) then 
-	    set TR = 2560
-	else if ( $TASK == learning ) then 
-	    set TR = 2200
 	else
 	    echo 'ERROR: Entered invalid task condition: ' $TASK
 	endif 
 
-	## Convert f.niii
+	## Convert f.nii
         if (-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/f.nii) then
             set FN = f.nii
         endif
