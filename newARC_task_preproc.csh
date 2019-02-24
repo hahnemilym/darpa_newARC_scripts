@@ -48,7 +48,7 @@ foreach TASK ($TASKS)
 	switch ($TASK)
     	    case 'newARC':
         	set TR = 1750 
-		set ROOT_DIR = /autofs/space/lilli_002/users/DARPA-newARC/
+		set ROOT_DIR = /autofs/space/lilli_001/users/DARPA-newARC/
                 breaksw
 	    default:
 		echo 'Invalid Task'
@@ -64,16 +64,16 @@ foreach TASK ($TASKS)
 	set TASK_NAME = `echo $TASK | tr '[:lower:]' '[:upper:]'`
 	echo $TASK_NAME	
         
-	if !(-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/a{$SUB_NAME}_{$TASK_NAME}.nii) then
-            if (-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/f.nii) then
+	if !(-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/a{$SUB_NAME}_{$TASK_NAME}.nii) then
+            if (-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/f.nii) then
                 echo 'Source file already renamed to f.nii.'
             else
-                echo $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/a{$SUB_NAME}_{$TASK_NAME}.nii
+                echo $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/a{$SUB_NAME}_{$TASK_NAME}.nii
 		echo 'Source file not found.'
             endif
         else
-            set SRC = $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/a{$SUB_NAME}_{$TASK_NAME}.nii
-            set DST = $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/f.nii
+            set SRC = $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/a{$SUB_NAME}_{$TASK_NAME}.nii
+            set DST = $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/f.nii
             echo 'Renaming File.'
             mv $SRC $DST
         endif
@@ -89,35 +89,34 @@ foreach TASK ($TASKS)
 	endif 
 
 	## Convert f.nii
-        if (-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/f.nii) then
+        if (-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/f.nii) then
             set FN = f.nii
         endif
         set FN = f.nii
-        set INFO = `mri_info $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/$FN --tr`
+        set INFO = `mri_info $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/$FN --tr`
         if !($INFO == $TR) then
-            mri_convert $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/$FN $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/$FN -tr $TR
-            #sleep 30
+            mri_convert $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/$FN $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/$FN -tr $TR
         else
             echo 'TR matches for ' $FN
         endif
 
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
-	## Beta-zero correction. 
+	    ## Beta-zero correction.
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
 	if ( -f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/b0dcmap.nii.gz ) then 
 	    echo 'Beta-zero corrected.'
 	else
             ## Source FSL 4.1.10.
-            source /usr/local/freesurfer/nmr-stable53-env
+            source /usr/local/freesurfer/nmr-stable6-env
             set FSL_DIR = /usr/pubsw/packages/fsl/4.1.10/
-            source /usr/local/freesurfer/nmr-stable53-env
+            source /usr/local/freesurfer/nmr-stable6-env
         
-	    epidewarp.fsl --mag $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/mag.nii --dph $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/phase.nii --epi $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/f.nii --tediff 2.46 --esp 0.69 --vsm $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/b0dcmap.nii.gz
+	    epidewarp.fsl --mag $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/mag.nii --dph $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/phase.nii --epi $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/f.nii --tediff 2.46 --esp 0.69 --vsm $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/b0dcmap.nii.gz
 	endif
 
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
-	## Preprocess. 
+	    ## Preprocess.
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 	
 	## Source current version of FSL. 
