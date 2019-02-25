@@ -8,7 +8,7 @@ function general_multiband_slice_timing(subjects, conditions, runs)
 % allow user to select NIFTI files.
 
 %% Example Command:
-% newARC_MBST({'newARC_001', 'newARC_002'},{'newARC'},{'001','002','003'})
+% newARC_MBST({'newARC_001', 'newARC_002'},{'newARC'},{'newARC_001','newARC_002','newARC_003'})
 
 %% use this command to see how many (TRs+1) in dir: ls -l . | egrep -c '^-' 
 
@@ -38,7 +38,7 @@ for subIdx = 1:numSub
 
             %% Select functional files.
             msg = ['Select files for ' subjects{subIdx}]   
-            P = spm_select(Inf,'image',msg,[],run_dir,['newARC_',runs{runIdx},'.nii'],'1:1000');
+            P = spm_select(Inf,'image',msg,[],[run_dir filesep 001],[runs{runIdx},'.nii'],'1:1000');
 
             %% Cue for TR.
     %         TR = inputdlg(['TR:','Please enter TR for ' conditions{condIdx}]);
