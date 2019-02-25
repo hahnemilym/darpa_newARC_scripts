@@ -64,18 +64,18 @@ foreach TASK ($TASKS)
 	set TASK_NAME = `echo $TASK | tr '[:lower:]' '[:upper:]'`
 	echo $TASK_NAME	
         
-	if !(-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/a{$SUB_NAME}_{$TASK_NAME}.nii) then
-            if (-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/f.nii) then
+	if !(-f $ROOT_DIR/$SUBJECT/${RUN}/a${TASK}_${RUN}.nii) then
+            if (-f $ROOT_DIR/$SUBJECT/${RUN}/f.nii) then
                 echo 'Source file already renamed to f.nii.'
             else
-                echo $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/a{$SUB_NAME}_{$TASK_NAME}.nii
+                echo $ROOT_DIR/$SUBJECT/${TASK}_${RUN}/a${TASK}_${RUN}.nii
 		echo 'Source file not found.'
             endif
         else
-            set SRC = $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/a{$SUB_NAME}_{$TASK_NAME}.nii
-            set DST = $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/f.nii
+            set SRC = $ROOT_DIR/$SUBJECT/${TASK}_${RUN}/a${TASK}_${RUN}.nii
+            set DST = $ROOT_DIR/$SUBJECT/${TASK}_${RUN}/f.nii
             echo 'Renaming File.'
-            mv $SRC $DST
+            mri_convert $SRC $DST
         endif
 
 	###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
@@ -89,13 +89,10 @@ foreach TASK ($TASKS)
 	endif 
 
 	## Convert f.nii
-        if (-f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/f.nii) then
-            set FN = f.nii
-        endif
         set FN = f.nii
-        set INFO = `mri_info $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/$FN --tr`
+        set INFO = `mri_info $ROOT_DIR/$SUBJECT/${RUN}/$FN --tr`
         if !($INFO == $TR) then
-            mri_convert $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/$FN $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/$FN -tr $TR
+            mri_convert $ROOT_DIR/$SUBJECT/${RUN}/$FN $ROOT_DIR/$SUBJECT/${RUN}/$FN -tr $TR
         else
             echo 'TR matches for ' $FN
         endif
@@ -104,7 +101,7 @@ foreach TASK ($TASKS)
 	    ## Beta-zero correction.
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 
-	if ( -f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/b0dcmap.nii.gz ) then 
+	if ( -f $ROOT_DIR/$SUBJECT/${RUN}/b0dcmap.nii.gz ) then 
 	    echo 'Beta-zero corrected.'
 	else
             ## Source FSL 4.1.10.
@@ -112,7 +109,7 @@ foreach TASK ($TASKS)
             set FSL_DIR = /usr/pubsw/packages/fsl/4.1.10/
             source /usr/local/freesurfer/nmr-stable6-env
         
-	    epidewarp.fsl --mag $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/mag.nii --dph $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/phase.nii --epi $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/f.nii --tediff 2.46 --esp 0.69 --vsm $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/b0dcmap.nii.gz
+	    epidewarp.fsl --mag $ROOT_DIR/$SUBJECT/${RUN}/mag.nii --dph $ROOT_DIR/$SUBJECT/${RUN}/phase.nii --epi $ROOT_DIR/$SUBJECT/${RUN}/f.nii --tediff 2.46 --esp 0.69 --vsm $ROOT_DIR/$SUBJECT/${RUN}/b0dcmap.nii.gz
 	endif
 
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
@@ -122,12 +119,13 @@ foreach TASK ($TASKS)
 	## Source current version of FSL. 
 	set FSL_DIR = /usr/pubsw/packages/fsl/current
 	source /usr/local/freesurfer/nmr-stable53-env
-	preproc-sess -s $SUBJECT -surface $SURFACE lhrh -mni305 -fwhm $FWHM -per-run -fsd {$TASK}_{$RUN} -nostc -b0dc -force
+	preproc-sess -s $SUBJECT -surface $SURFACE lhrh -mni305 -fwhm $FWHM -per-run -fsd $RUN -nostc -b0dc -force
 
 	# Make Motion Plots
-	plot-twf-sess -s $SUBJECT -fsd {$TASK}_{$RUN} -mc
+	plot-twf-sess -s $SUBJECT -fsd ${RUN} -mc
     end
 end
 
 ## Return to scripts directory.
-cd $ROOT_DIR/scripts/preproc
+cd $ROOT_DIR
+

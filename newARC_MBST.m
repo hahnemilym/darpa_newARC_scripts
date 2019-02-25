@@ -4,14 +4,13 @@ function general_multiband_slice_timing(subjects, conditions, runs)
 % the Deckersbach group for their multi-band imaging scans. Assumes a scan
 % with 63 slices collected in an interleaved fashion (odds-first) across
 % three volumes.
-% go to matlab and open spm then type the exact function. SPM will open a window which will 
-% allow you to select your exact files etc..
+% To run this script: Open Matlab, type command amd pass proper arguments. SPM will open a window which will 
+% allow user to select NIFTI files.
 
 %% Example Command:
-% general_multiband_slice_timing({'newARC_001', 'newARC_002'},{'newARC'},{1,2,3})
+% newARC_MBST({'newARC_001', 'newARC_002'},{'newARC'},{'001','002','003'})
 
-% Note: arc_rer can only be processed by itself. 
-% Other tasks may be processed together.
+%% use this command to see how many (TRs+1) in dir: ls -l . | egrep -c '^-' 
 
 %% Specify root directory and subjects.
 addpath '/autofs/cluster/pubsw/1/pubsw/common/spm/spm8';
@@ -31,18 +30,15 @@ for subIdx = 1:numSub
             switch conditions{condIdx}
                 case 'newARC'
                     TR = 1750
-                    dir = '/space/lilli/4/users/DARPA-NewARC';
+                    dir = '/autofs/space/lilli_001/users/DARPA-newARC';
             end
 
             %% Specify Run Directory.
-	    func_dir = 'func'
-	    analysis_dir = 'msit_bsm'
-            run_dir = [dir filesep 'subjs' filesep subjects{subIdx} filesep analysis_dir filesep func_dir]
-	    disp(run_dir)
+            run_dir = [dir filesep subjects{subIdx} filesep runs{runIdx}];
 
             %% Select functional files.
             msg = ['Select files for ' subjects{subIdx}]   
-            P = spm_select(Inf,'image',msg,[],run_dir,'func.nii','1:1000');
+            P = spm_select(Inf,'image',msg,[],run_dir,['newARC_',runs{runIdx},'.nii'],'1:1000');
 
             %% Cue for TR.
     %         TR = inputdlg(['TR:','Please enter TR for ' conditions{condIdx}]);
