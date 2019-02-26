@@ -10,6 +10,9 @@ function general_multiband_slice_timing(subjects, conditions, runs)
 %% Example Command:
 % newARC_MBST({'newARC_001', 'newARC_002'},{'newARC'},{'newARC_001','newARC_002','newARC_003'})
 
+%% subjects='newARC_004,'newARC_005','newARC_008','newARC_009','newARC_010','newARC_011','newARC_014','newARC_015','newARC_016','newARC_017','newARC_018','newARC_020'
+
+
 %% use this command to see how many (TRs+1) in dir: ls -l . | egrep -c '^-' 
 
 %% Specify root directory and subjects.
@@ -34,11 +37,11 @@ for subIdx = 1:numSub
             end
 
             %% Specify Run Directory.
-            run_dir = [dir filesep subjects{subIdx} filesep runs{runIdx}];
+            run_dir = [dir filesep subjects{subIdx} filesep runs{runIdx}]
 
             %% Select functional files.
             msg = ['Select files for ' subjects{subIdx}]   
-            P = spm_select(Inf,'image',msg,[],[run_dir filesep 001],[runs{runIdx},'.nii'],'1:1000');
+            P = spm_select(Inf,'image',msg,[],[run_dir filesep '001'], [runs{runIdx},'.nii'],'1:1000');
 
             %% Cue for TR.
     %         TR = inputdlg(['TR:','Please enter TR for ' conditions{condIdx}]);

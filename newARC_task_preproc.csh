@@ -8,6 +8,9 @@
 #	- Perform slice-time correction in SPM
 #
 #For documenation on the above steps see the DARPA fMRI manual. 
+#
+# To list # files in a directory:
+# ls -l | grep -v ^l | wc -l
 
 #!/bin/csh -f
 
@@ -24,7 +27,7 @@ setenv SUBJECTS_DIR /autofs/space/lilli_001/users/DARPA-newARC-RECONS
 set SUBJECTS = (newARC_001)    ## Specify subjects
 set FWHM = 6 		  ## Specify smoothing 
 set TASKS = (newARC)	  ## Specify task
-set RUN = 001		  ## Specify run number
+set RUN = 003		  ## Specify run number
 set TR = 1750
 set ROOT_DIR = /autofs/space/lilli_001/users/DARPA-newARC
 
@@ -82,6 +85,7 @@ foreach TASK ($TASKS)
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 	## Beta-zero correction. 
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
+	setenv SUBJECTS_DIR /autofs/space/lilli_001/users/DARPA-newARC-RECONS
 
 	if ( -f $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/b0dcmap.nii.gz ) then 
 	    echo 'Beta-zero corrected.'
@@ -91,13 +95,14 @@ foreach TASK ($TASKS)
             set FSL_DIR = /usr/pubsw/packages/fsl/4.1.10/
             source /usr/local/freesurfer/nmr-stable6-env
         
-	    epidewarp.fsl --mag $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/mag.nii --dph $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/phase.nii --epi $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/f.nii --tediff 2.46 --esp 0.69 --vsm $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/b0dcmap.nii.gz
+	    epidewarp.fsl --mag $ROOT_DIR/$SUBJECT/mag.nii --dph $ROOT_DIR/$SUBJECT/phase.nii --epi $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/001/f.nii --tediff 2.46 --esp 0.69 --vsm $ROOT_DIR/$SUBJECT/{$TASK}_{$RUN}/b0dcmap.nii.gz
 	endif
 
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
 	## Preprocess. 
         ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
-	
+	setenv SUBJECTS_DIR /autofs/space/lilli_001/users/DARPA-newARC-RECONS	
+
 	## Source current version of FSL. 
 	set FSL_DIR = /usr/pubsw/packages/fsl/current
 	source /usr/local/freesurfer/nmr-stable6-env
@@ -109,4 +114,4 @@ foreach TASK ($TASKS)
 end
 
 ## Return to scripts directory.
-cd $ROOT_DIR
+cd /autofs/space/lilli_001/users/DARPA-Scripts/tutorials/darpa_pipelines_EH/darpa_newARC_scripts
